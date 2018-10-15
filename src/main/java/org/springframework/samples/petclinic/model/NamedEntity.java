@@ -27,7 +27,7 @@ import javax.persistence.MappedSuperclass;
  * @author Juergen Hoeller
  */
 @MappedSuperclass
-public class NamedEntity extends BaseEntity {
+public class NamedEntity extends BaseEntity implements Comparable<NamedEntity> {
 
     @Column(name = "name")
     private String name;
@@ -43,6 +43,11 @@ public class NamedEntity extends BaseEntity {
     @Override
     public String toString() {
         return this.getName();
+    }
+
+    @Override
+    public int compareTo(NamedEntity o) {
+        return name.compareToIgnoreCase(o.name);
     }
 
 }

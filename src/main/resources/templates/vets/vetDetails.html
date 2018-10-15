@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{fragments/layout :: layout (~{::body},'vets')}">
+
+  <body>
+  
+  
+    <h2>Vet Information</h2>
+  
+  
+    <table class="table table-striped" th:object="${vet}">
+      <tr>
+        <th>Name</th>
+        <td><b th:text="*{firstName + ' ' + lastName}"></b></td>
+      </tr>
+      
+     
+    </table>
+  
+    <a th:href="@{{id}/edit(id=${vet.id})}" class="btn btn-default">Edit
+      Veternarian</a>
+    
+  
+    <br />
+    <br />
+    <br />
+   
+  
+  </body>
+
+</html>

@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.samples.petclinic.visit;
+package org.springframework.samples.petclinic.appointment;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.BaseEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Repository class for <code>Visit</code> domain objects All method names are compliant with Spring Data naming
@@ -30,17 +33,18 @@ import org.springframework.samples.petclinic.model.BaseEntity;
  * @author Sam Brannen
  * @author Michael Isvy
  */
-public interface VisitRepository extends Repository<Visit, Integer> {
+public interface AppointmentRepository extends CrudRepository<Appointment, Integer> {
 
-    /**
-     * Save a <code>Visit</code> to the data store, either inserting or updating it.
-     *
-     * @param visit the <code>Visit</code> to save
-     * @see BaseEntity#isNew
-     */
-    void save(Visit visit) throws DataAccessException;
+    List<Appointment> findByPetId(Integer petId);
+    
+    List<Appointment> findByVet(String name);
+    
+    @Query("SELECT appt FROM Appointment appt WHERE appt.vet = :name AND appt.date =:date AND appt.timeslot = :timeslot")
+    @Transactional(readOnly = true)
+    Appointment findByVetAndTimeslot(String name, LocalDate date, String timeslot);
 
-    List<Visit> findByPetId(Integer petId);
+    @Query("SELECT appt FROM Appointment appt WHERE appt.petId = :petId AND appt.date =:date AND appt.timeslot = :timeslot")
+    Appointment findByPetAndTimeslot(Integer petId, LocalDate date, String timeslot);
 
   
 }

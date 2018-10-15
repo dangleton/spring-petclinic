@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.samples.petclinic.visit;
+package org.springframework.samples.petclinic.appointment;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,23 +27,31 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.vet.Vet;
 
 /**
- * Simple JavaBean domain object representing a visit.
+ * Simple JavaBean domain object representing an appointment.
  *
  * @author Ken Krebs
  * @author Dave Syer
  */
 @Entity
-@Table(name = "visits")
-public class Visit extends BaseEntity {
+@Table(name = "appointments")
+public class Appointment extends BaseEntity implements Comparable<Appointment> {
 
-    @Column(name = "visit_date")
+    @Column(name = "appointment_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
+
+    @Column(name = "timeslot")
+    private String timeslot;
+
+   
+    @Column(name = "vet")
+    private String vet;
 
     @NotEmpty
     @Column(name = "description")
@@ -52,8 +63,16 @@ public class Visit extends BaseEntity {
     /**
      * Creates a new instance of Visit for the current date
      */
-    public Visit() {
-        this.date = LocalDate.now();
+    public Appointment() {
+        this.date = findNextValidDay();
+    }
+
+    private LocalDate findNextValidDay() {
+        LocalDate ret = LocalDate.now().plusDays(1);
+        while (ret.getDayOfWeek() == DayOfWeek.SATURDAY || ret.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            ret = ret.plusDays(1);
+        }
+        return ret;
     }
 
     public LocalDate getDate() {
@@ -80,5 +99,28 @@ public class Visit extends BaseEntity {
         this.petId = petId;
     }
 
+    public String getVet() {
+        return vet;
+    }
+
+    public void setVet(String vet) {
+        this.vet = vet;
+    }
+
+    public String getTimeslot() {
+        return timeslot;
+    }
+
+    public void setTimeslot(String timeslot) {
+        this.timeslot = timeslot;
+    }
+
+    @Override
+    public int compareTo(Appointment o) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("hh:mm a");
+        LocalTime d1 = LocalTime.parse(timeslot, dtf);
+        LocalTime d2 = LocalTime.parse(o.timeslot, dtf);
+        return new CompareToBuilder().append(date, o.date).append(d1, d2).toComparison();
+    }
 
 }

@@ -16,15 +16,20 @@
 package org.springframework.samples.petclinic.vet;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Repository class for <code>Vet</code> domain objects All method names are compliant with Spring Data naming
- * conventions so this interface can easily be extended for Spring Data See here: http://static.springsource.org/spring-data/jpa/docs/current/reference/html/jpa.repositories.html#jpa.query-methods.query-creation
+ * conventions so this interface can easily be extended for Spring Data See here:
+ * http://static.springsource.org/spring-data/jpa/docs/current/reference/html/jpa.repositories.html#jpa.query-methods.query-creation
  *
  * @author Ken Krebs
  * @author Juergen Hoeller
@@ -38,9 +43,48 @@ public interface VetRepository extends Repository<Vet, Integer> {
      *
      * @return a <code>Collection</code> of <code>Vet</code>s
      */
+    @Query("SELECT DISTINCT vet FROM Vet vet left join fetch vet.specialties ORDER BY vet.lastName")
     @Transactional(readOnly = true)
-    @Cacheable("vets")
     Collection<Vet> findAll() throws DataAccessException;
 
+    /**
+     * Retrieve {@link Vet}s from the data store by last name, returning all Vets whose last name <i>starts</i> with the
+     * given name.
+     * 
+     * @param lastName
+     *            Value to search for
+     * @return a Collection of matching {@link Vet}s (or an empty Collection if none found)
+     */
+    @Query("SELECT DISTINCT vet FROM Vet vet left join fetch vet.specialties WHERE vet.lastName LIKE :lastName%")
+    @Transactional(readOnly = true)
+    Collection<Vet> findByLastName(@Param("lastName") String lastName);
+
+    /**
+     * Retrieve an {@link Vet} from the data store by id.
+     * 
+     * @param id
+     *            the id to search for
+     * @return the {@link Vet} if found
+     */
+    @Query("SELECT vet FROM Vet vet left join fetch vet.specialties WHERE vet.id =:id")
+    @Transactional(readOnly = true)
+    Vet findById(@Param("id") Integer id);
+
+    /**
+     * Retrieve all {@link Specialties}s from the data store.
+     * 
+     * @return a Collection of {@link Specitalty}s.
+     */
+    @Query("SELECT sp FROM Specialty sp ORDER BY sp.name")
+    @Transactional(readOnly = true)
+    List<Specialty> findSpecialties();
+
+    /**
+     * Save an {@link Vet} to the data store, either inserting or updating it.
+     * 
+     * @param owner
+     *            the {@link Vet} to save
+     */
+    void save(Vet owner);
 
 }

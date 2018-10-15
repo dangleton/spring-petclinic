@@ -25,7 +25,12 @@ import javax.validation.constraints.NotEmpty;
  * @author Ken Krebs
  */
 @MappedSuperclass
-public class Person extends BaseEntity {
+public class Person extends BaseEntity implements Comparable<Person> {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "first_name")
     @NotEmpty
@@ -49,6 +54,11 @@ public class Person extends BaseEntity {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @Override
+    public int compareTo(Person o) {
+        return this.lastName.compareToIgnoreCase(o.lastName);
     }
 
 }

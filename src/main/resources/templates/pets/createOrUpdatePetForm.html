@@ -19,9 +19,9 @@
       <input
         th:replace="~{fragments/inputField :: input ('Name', 'name', 'text')}" />
       <input
-        th:replace="~{fragments/inputField :: input ('Birth Date', 'birthDate', 'date')}" />
+        th:replace="~{fragments/dateField :: date ('Birth Date', 'birthDate', true, '-50:+0', null, 'now')}" />
       <input
-        th:replace="~{fragments/selectField :: select ('Type', 'type', ${types})}" />
+        th:replace="~{fragments/selectField :: select ('Type', 'type', ${types}, false)}" />
     </div>
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
