@@ -42,20 +42,35 @@
 
     <tr th:each="pet : ${owner.pets}">
       <td>
-        <table>
+        <table class="table-condensed">
           <tr>
             <td valign="top">
-              <dl class="dl-horizontal">
-                <dt>Name</dt>
-                <dd th:text="${pet.name}" /></dd>
-                <dt>Birth Date</dt>
-                <dd
-                  th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}" /></dd>
-                <dt>Type</dt>
-                <dd th:text="${pet.type}" /></dd>
-              </dl>
+              <table class="table-condensed">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Birth Date</th>
+                    <th>Type</th>
+                  </tr>
+                </thead>
+                <tr>
+                  <td th:text="${pet.name}">Charley</td>
+                  <td
+                    th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}">2018-10-03
+                  </td>
+                  <td th:text="${pet.type}">cat</td>
+                </tr>
+                <tr>
+                  <td colspan="3"><a
+                    th:href="@{{ownerId}/pets/{petId}/edit(ownerId=${owner.id},petId=${pet.id})}">Edit
+                      Pet</a></td>
+                </tr>
+              </table>
             </td>
-            <td valign="top">
+          </tr>
+          <tr>
+            <td valign="top" style="padding: 0 0 0 2em;">
+              <h3 style="margin-bottom:0">Visits</h3>
               <table class="table-condensed">
                 <thead>
                   <tr>
@@ -68,9 +83,18 @@
                     th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"></td>
                   <td th:text="${visit?.description}"></td>
                 </tr>
+                <tr>
+                  <td colspan="2"><a
+                    th:href="@{{ownerId}/pets/{petId}/visits/new(ownerId=${owner.id},petId=${pet.id})}">Add
+                      Visit</a></td>
+
+                </tr>
               </table>
             </td>
-            <td valign="top">
+          </tr>
+          <tr>
+            <td valign="top" style="padding: 0 0 0 2em;">
+              <h3 style="margin-bottom:0">Appointments</h3>
               <table class="table-condensed">
                 <thead>
                   <tr>
@@ -91,29 +115,20 @@
                     th:href="@{{ownerId}/appointments/{appointmentId}/delete(ownerId=${owner.id},appointmentId=${appointment.id})}">Cancel
                       Appointment</a></td>
                 </tr>
+                <tr>
+                  <td colspan="5"><a
+                    th:href="@{{ownerId}/pets/{petId}/appointments/new(ownerId=${owner.id},petId=${pet.id})}">Add
+                      Appointment</a></td>
+                </tr>
 
               </table>
             </td>
-          </tr>
 
-          <tr>
-            <td class="text-center"><a
-              th:href="@{{ownerId}/pets/{petId}/edit(ownerId=${owner.id},petId=${pet.id})}">Edit
-                Pet</a></td>
-            <td class="text-center"><a
-              th:href="@{{ownerId}/pets/{petId}/visits/new(ownerId=${owner.id},petId=${pet.id})}">Add
-                Visit</a></td>
-            <td class="text-center"><a
-              th:href="@{{ownerId}/pets/{petId}/appointments/new(ownerId=${owner.id},petId=${pet.id})}">Add
-                Appointment</a></td>
           </tr>
         </table>
       </td>
     </tr>
   </table>
-
-
-
 </body>
 
 </html>

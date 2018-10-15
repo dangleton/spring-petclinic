@@ -107,7 +107,7 @@ public class PetControllerTests {
                 .param("name", "duplicate")
                 .param("type", "hamster")
                 .param("birthDate", "2015-02-12"))
-                .andExpect(model().attributeHasFieldErrorCode("name", "duplicate", "already exists"))
+                .andExpect(model().attributeHasFieldErrors("pet", "name"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("pets/createOrUpdatePetForm"));
     }
